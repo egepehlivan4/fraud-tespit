@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Giriş — Fraud Tespit Sistemi</title>
+    <style>
+        body { font-family: sans-serif; max-width: 360px; margin: 80px auto; }
+        label { display: block; margin-top: 12px; }
+        input { width: 100%; padding: 6px; box-sizing: border-box; }
+        button { margin-top: 20px; padding: 8px 16px; }
+        .hata { color: #b00020; }
+        .bilgi { color: #2e7d32; }
+    </style>
+</head>
+<body>
+<h2>Fraud Tespit Sistemi</h2>
+
+<p th:if="${param.error}" class="hata">Email veya şifre hatalı.</p>
+<p th:if="${param.cikis}" class="bilgi">Çıkış yapıldı.</p>
+
+<form method="post" th:action="@{/login}">
+    <label for="username">Email</label>
+    <input type="text" id="username" name="username" autofocus>
+
+    <label for="password">Şifre</label>
+    <input type="password" id="password" name="password">
+
+    <button type="submit">Giriş Yap</button>
+</form>
+</body>
+</html>

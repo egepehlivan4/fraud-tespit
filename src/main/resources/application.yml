@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    # frauddb veritabanindaki fraud semasina baglanir (db/fraud_db.sql ile olusturuldu)
+    url: jdbc:postgresql://localhost:5432/frauddb?currentSchema=fraud
+    username: ${DB_USERNAME:ege}
+    password: ${DB_PASSWORD:}
+  thymeleaf:
+    cache: false   # gelistirme sirasinda sablon degisiklikleri yeniden baslatmadan gorulsun
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.jdbc: WARN

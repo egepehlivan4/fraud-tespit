@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Müşteri Paneli</title>
+</head>
+<body>
+<h2>Hoşgeldin, <span th:text="${adSoyad}"></span></h2>
+<p>Rolün: MUSTERI</p>
+<p><em>Bu ekran yer tutucudur — harcama profili, kartlar, bildirimler vb. ilerleyen aşamalarda eklenecek.</em></p>
+<form method="post" th:action="@{/logout}">
+    <button type="submit">Çıkış Yap</button>
+</form>
+</body>
+</html>

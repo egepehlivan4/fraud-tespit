@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Paneli</title>
+</head>
+<body>
+<h2>Hoşgeldin, <span th:text="${adSoyad}"></span></h2>
+<p>Rolün: ADMIN</p>
+<p><em>Bu ekran yer tutucudur — kullanıcı/işyeri/kural yönetimi vb. ilerleyen aşamalarda eklenecek.</em></p>
+<form method="post" th:action="@{/logout}">
+    <button type="submit">Çıkış Yap</button>
+</form>
+</body>
+</html>
