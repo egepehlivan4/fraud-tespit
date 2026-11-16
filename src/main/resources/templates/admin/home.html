@@ -7,7 +7,10 @@
 <body>
 <h2>Hoşgeldin, <span th:text="${adSoyad}"></span></h2>
 <p>Rolün: ADMIN</p>
-<p><em>Bu ekran yer tutucudur — kullanıcı/işyeri/kural yönetimi vb. ilerleyen aşamalarda eklenecek.</em></p>
+<ul>
+    <li><a th:href="@{/admin/kullanicilar}">Kullanıcı Yönetimi</a></li>
+</ul>
+<p><em>İşyeri/kural yönetimi vb. ilerleyen aşamalarda eklenecek.</em></p>
 <form method="post" th:action="@{/logout}">
     <button type="submit">Çıkış Yap</button>
 </form>

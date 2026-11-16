@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kullanıcı Düzenle</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+        label { display: block; margin-top: 12px; }
+        input, select { width: 100%; padding: 6px; box-sizing: border-box; }
+        input[type=checkbox] { width: auto; }
+        button { margin-top: 20px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin/kullanicilar}">&larr; Kullanıcı listesi</a></p>
+<h2>Kullanıcı Düzenle</h2>
+
+<form method="post" th:action="@{/admin/kullanicilar/{id}(id=${kullanici.id()})}">
+    <label>Ad Soyad <input type="text" name="adSoyad" th:value="${kullanici.adSoyad()}" required></label>
+    <label>Email <input type="email" name="email" th:value="${kullanici.email()}" required></label>
+    <label>Rol
+        <select name="rolId" required>
+            <option th:each="r : ${roller}" th:value="${r.id()}" th:text="${r.ad()}"
+                    th:selected="${r.id() == kullanici.rolId()}"></option>
+        </select>
+    </label>
+    <label>
+        <input type="checkbox" name="aktif" value="true" th:checked="${kullanici.aktif()}">
+        Aktif
+    </label>
+    <label>Yeni Şifre (boş bırakılırsa değişmez) <input type="password" name="sifre"></label>
+    <button type="submit">Kaydet</button>
+</form>
+</body>
+</html>

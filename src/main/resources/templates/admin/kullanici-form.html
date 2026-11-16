@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Yeni Kullanıcı</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+        label { display: block; margin-top: 12px; }
+        input, select { width: 100%; padding: 6px; box-sizing: border-box; }
+        button { margin-top: 20px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin/kullanicilar}">&larr; Kullanıcı listesi</a></p>
+<h2>Yeni Kullanıcı Ekle</h2>
+
+<form method="post" th:action="@{/admin/kullanicilar}">
+    <label>Ad Soyad <input type="text" name="adSoyad" required></label>
+    <label>Email <input type="email" name="email" required></label>
+    <label>Şifre <input type="password" name="sifre" required></label>
+    <label>Rol
+        <select name="rolId" required>
+            <option th:each="r : ${roller}" th:value="${r.id()}" th:text="${r.ad()}"></option>
+        </select>
+    </label>
+    <p><em>MUSTERI rolü seçilirse otomatik olarak bir hesap açılır.</em></p>
+    <button type="submit">Kaydet</button>
+</form>
+</body>
+</html>

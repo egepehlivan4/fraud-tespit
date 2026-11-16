@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kullanıcı Yönetimi</title>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        .bilgi { color: #2e7d32; }
+        .hata { color: #b00020; }
+        .pasif { color: #999; }
+        form.satir-form { display: inline; }
+        .filtre { margin-top: 12px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin}">&larr; Admin ana sayfa</a></p>
+<h2>Kullanıcı Yönetimi</h2>
+
+<p th:if="${bilgi}" class="bilgi" th:text="${bilgi}"></p>
+<p th:if="${hata}" class="hata" th:text="${hata}"></p>
+
+<form class="filtre" method="get" th:action="@{/admin/kullanicilar}">
+    <label>Rol:
+        <select name="rol">
+            <option value="" th:selected="${secilenRol == null}">Hepsi</option>
+            <option th:each="r : ${roller}" th:value="${r.ad()}" th:text="${r.ad()}"
+                    th:selected="${r.ad() == secilenRol}"></option>
+        </select>
+    </label>
+    <label>Durum:
+        <select name="aktif">
+            <option value="" th:selected="${secilenAktif == null}">Hepsi</option>
+            <option value="true" th:selected="${secilenAktif == 'true'}">Aktif</option>
+            <option value="false" th:selected="${secilenAktif == 'false'}">Pasif</option>
+        </select>
+    </label>
+    <button type="submit">Filtrele</button>
+</form>
+
+<p><a th:href="@{/admin/kullanicilar/yeni}">+ Yeni kullanıcı ekle</a></p>
+
+<table>
+    <tr>
+        <th>Id</th><th>Ad Soyad</th><th>Email</th><th>Rol</th><th>Durum</th><th>İşlemler</th>
+    </tr>
+    <tr th:each="k : ${kullanicilar}" th:class="${k.aktif()} ? '' : 'pasif'">
+        <td th:text="${k.id()}"></td>
+        <td th:text="${k.adSoyad()}"></td>
+        <td th:text="${k.email()}"></td>
+        <td th:text="${k.rolAdi()}"></td>
+        <td th:text="${k.aktif()} ? 'Aktif' : 'Pasif'"></td>
+        <td>
+            <a th:href="@{/admin/kullanicilar/{id}/duzenle(id=${k.id()})}">Düzenle</a>
+            &nbsp;
+            <form class="satir-form" method="post"
+                  th:action="@{/admin/kullanicilar/{id}/sil(id=${k.id()})}"
+                  onsubmit="return confirm('Bu kullanıcıyı silmek/pasif yapmak istediğinize emin misiniz?');">
+                <button type="submit">Sil</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
