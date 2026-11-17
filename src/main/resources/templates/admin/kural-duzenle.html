@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kural Düzenle</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+        label { display: block; margin-top: 12px; }
+        input { width: 100%; padding: 6px; box-sizing: border-box; }
+        input[type=checkbox] { width: auto; }
+        input[readonly] { background: #eee; }
+        button { margin-top: 20px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin/kurallar}">&larr; Kural listesi</a></p>
+<h2>Kural Düzenle</h2>
+
+<form method="post" th:action="@{/admin/kurallar/{id}(id=${kural.id()})}">
+    <label>Tip (kod) <input type="text" th:value="${kural.kod()}" readonly></label>
+    <label>Ad <input type="text" name="ad" th:value="${kural.ad()}" required></label>
+    <label>Puan (0-100) <input type="number" name="puan" min="0" max="100" th:value="${kural.puan()}" required></label>
+    <label>Eşik <input type="number" step="0.01" name="esik" th:value="${kural.esik()}"></label>
+    <label>
+        <input type="checkbox" name="aktif" value="true" th:checked="${kural.aktif()}">
+        Aktif
+    </label>
+    <button type="submit">Kaydet</button>
+</form>
+</body>
+</html>

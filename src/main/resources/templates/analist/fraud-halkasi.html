@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fraud Halkası Sorgulama</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        label { display: block; margin-top: 12px; }
+        input { padding: 6px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/analist/raporlar}">&larr; Şehir/Kategori Raporu</a></p>
+<h2>Fraud Halkası Sorgulama</h2>
+<p>Bir hesap id'si girin; bu hesapla aynı cihazı paylaşan (zincirleme) hesapları gösterir.</p>
+
+<form method="get" th:action="@{/analist/raporlar/fraud-halkasi}">
+    <label>Hesap Id <input type="number" name="hesapId" th:value="${secilenHesapId}" required></label>
+    <button type="submit">Sorgula</button>
+</form>
+
+<div th:if="${secilenHesapId != null}">
+    <p th:if="${sonuclar.isEmpty()}">Bağlantılı hesap bulunamadı.</p>
+    <table th:if="${!sonuclar.isEmpty()}">
+        <tr><th>Hesap Id</th><th>Sahibi</th><th>Derinlik</th></tr>
+        <tr th:each="s : ${sonuclar}">
+            <td th:text="${s.hesapId()}"></td>
+            <td th:text="${s.sahibi()}"></td>
+            <td th:text="${s.derinlik()}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

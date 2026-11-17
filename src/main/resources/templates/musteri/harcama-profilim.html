@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Harcama Profilim</title>
+    <style>
+        body { font-family: sans-serif; max-width: 750px; margin: 40px auto; }
+        .aciklama { background: #f5f5f5; padding: 12px 16px; margin-top: 16px; font-size: 0.92em; }
+        .not { color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/musteri}">&larr; Ana sayfa</a></p>
+<h2>Harcama Profilim</h2>
+
+<p th:if="${hesaplar.isEmpty()}">Henüz bir hesabınız bulunmuyor.</p>
+
+<form th:if="${hesaplar.size() > 1}" method="get" th:action="@{/musteri/harcama-profilim}">
+    <label>Hesap:
+        <select name="hesapId" onchange="this.form.submit()">
+            <option th:each="h : ${hesaplar}" th:value="${h.id()}" th:text="${h.iban()}"
+                    th:selected="${h.id() == secilenHesapId}"></option>
+        </select>
+    </label>
+</form>
+
+<canvas id="grafik" th:if="${!hesaplar.isEmpty()}" width="700" height="350"></canvas>
+
+<p class="not" th:if="${sonAyDevamEdiyor}">
+    <em>Bu ay henüz tamamlanmadı (kesikli çizgi) — ay sonuna kadar değer değişebilir.</em>
+</p>
+
+<div class="aciklama" th:if="${!hesaplar.isEmpty()}">
+    <strong>Bu grafik nasıl çalışır?</strong>
+    <p>Her ayın sonunda sistem, o ayın gerçek toplam harcamasını modele öğretir:
+    <em>yeni beklenti = eski beklenti + öğrenme payı × (gerçek − eski beklenti)</em>.
+    Yani bir ay beklentiden fazla/az harcarsanız, bir sonraki ayın beklentisi o yöne doğru
+    biraz kayar — harcama alışkanlığınız değiştikçe sistem kendini otomatik güncelliyor.
+    Üst sınır, ayarlarınızdaki tolerans yüzdesine (veya otomatik tolerans seçiliyse
+    ortalama + 2 standart sapmaya) göre hesaplanır.</p>
+</div>
+
+<script th:if="${!hesaplar.isEmpty()}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:if="${!hesaplar.isEmpty()}" th:inline="javascript">
+/*<![CDATA[*/
+var etiketler = /*[[${etiketler}]]*/ [];
+var gercek = /*[[${gercekDizi}]]*/ [];
+var beklenen = /*[[${beklenenDizi}]]*/ [];
+var ustSinir = /*[[${ustSinirDizi}]]*/ [];
+var sonIndex = /*[[${sonIndex}]]*/ 0;
+var devamEdiyor = /*[[${sonAyDevamEdiyor}]]*/ false;
+
+new Chart(document.getElementById('grafik'), {
+    type: 'line',
+    data: {
+        labels: etiketler,
+        datasets: [
+            {
+                label: 'Gerçek',
+                data: gercek,
+                borderColor: '#1565c0',
+                backgroundColor: '#1565c0',
+                segment: {
+                    borderDash: ctx => (devamEdiyor && ctx.p1DataIndex === sonIndex) ? [6, 6] : undefined
+                },
+                pointRadius: ctx => (devamEdiyor && ctx.dataIndex === sonIndex) ? 6 : 3,
+                pointBackgroundColor: ctx => (devamEdiyor && ctx.dataIndex === sonIndex) ? '#fff' : '#1565c0',
+                pointBorderColor: '#1565c0',
+                pointBorderWidth: 2
+            },
+            { label: 'Beklenen', data: beklenen, borderColor: '#2e7d32', borderDash: [4, 4] },
+            { label: 'Üst Sınır', data: ustSinir, borderColor: '#b00020', borderDash: [2, 2] }
+        ]
+    },
+    options: {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    afterBody: ctx => (devamEdiyor && ctx[0].dataIndex === sonIndex)
+                        ? ['(bu ay devam ediyor, tutar henüz kesin değil)'] : []
+                }
+            }
+        },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+/*]]>*/
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Yeni Kart</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+        label { display: block; margin-top: 12px; }
+        input, select { width: 100%; padding: 6px; box-sizing: border-box; }
+        button { margin-top: 20px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin/kartlar}">&larr; Kart listesi</a></p>
+<h2>Hesaba Yeni Kart Tanımla</h2>
+
+<form method="post" th:action="@{/admin/kartlar}">
+    <label>Hesap
+        <select name="hesapId" required>
+            <option th:each="h : ${hesaplar}" th:value="${h.id()}"
+                    th:text="${h.sahip()} + ' — ' + ${h.iban()}"></option>
+        </select>
+    </label>
+    <label>Son 4 Hane <input type="text" name="son4" maxlength="4" pattern="\d{4}" required></label>
+    <button type="submit">Kaydet</button>
+</form>
+</body>
+</html>

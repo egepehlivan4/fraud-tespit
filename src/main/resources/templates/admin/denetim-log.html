@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Denetim Log</title>
+    <style>
+        body { font-family: sans-serif; max-width: 1000px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; vertical-align: top; }
+        .filtre { margin-top: 12px; }
+        .json { font-family: monospace; font-size: 0.82em; max-width: 260px; word-break: break-all; }
+        .sayfalama { margin-top: 16px; }
+        .sayfalama a { margin-right: 8px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin}">&larr; Admin ana sayfa</a></p>
+<h2>Denetim Log</h2>
+<p>kart, kural ve kullanici tablolarındaki her INSERT/UPDATE/DELETE burada izleniyor.</p>
+
+<form class="filtre" method="get" th:action="@{/admin/denetim-log}">
+    <label>Tablo:
+        <select name="tablo">
+            <option value="" th:selected="${secilenTablo == null}">Hepsi</option>
+            <option value="kart" th:selected="${secilenTablo == 'kart'}">kart</option>
+            <option value="kural" th:selected="${secilenTablo == 'kural'}">kural</option>
+            <option value="kullanici" th:selected="${secilenTablo == 'kullanici'}">kullanici</option>
+        </select>
+    </label>
+    <button type="submit">Filtrele</button>
+</form>
+
+<table>
+    <tr><th>Id</th><th>Tablo</th><th>Kayıt Id</th><th>İşlem</th><th>Kullanıcı</th><th>Zaman</th><th>Eski</th><th>Yeni</th></tr>
+    <tr th:each="s : ${satirlar}">
+        <td th:text="${s.id()}"></td>
+        <td th:text="${s.tablo()}"></td>
+        <td th:text="${s.kayitId()}"></td>
+        <td th:text="${s.islemTipi()}"></td>
+        <td th:text="${s.kullaniciAdi() != null ? s.kullaniciAdi() : '—'}"></td>
+        <td th:text="${#temporals.format(s.zaman(), 'dd.MM.yyyy HH:mm:ss')}"></td>
+        <td class="json" th:text="${s.eskiJson() != null ? s.eskiJson() : '—'}"></td>
+        <td class="json" th:text="${s.yeniJson() != null ? s.yeniJson() : '—'}"></td>
+    </tr>
+</table>
+
+<div class="sayfalama">
+    <a th:if="${sayfa > 1}" th:href="@{/admin/denetim-log(tablo=${secilenTablo}, sayfa=${sayfa - 1})}">&laquo; Önceki</a>
+    <span th:text="'Sayfa ' + ${sayfa} + ' / ' + ${toplamSayfa}"></span>
+    <a th:if="${sayfa < toplamSayfa}" th:href="@{/admin/denetim-log(tablo=${secilenTablo}, sayfa=${sayfa + 1})}">Sonraki &raquo;</a>
+</div>
+</body>
+</html>

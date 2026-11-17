@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>İşyeri Yönetimi</title>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        .bilgi { color: #2e7d32; }
+        .hata { color: #b00020; }
+        form.satir-form { display: inline; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin}">&larr; Admin ana sayfa</a></p>
+<h2>İşyeri Yönetimi</h2>
+
+<p th:if="${bilgi}" class="bilgi" th:text="${bilgi}"></p>
+<p th:if="${hata}" class="hata" th:text="${hata}"></p>
+
+<p><a th:href="@{/admin/isyeriler/yeni}">+ Yeni işyeri ekle</a></p>
+
+<table>
+    <tr><th>Id</th><th>Ad</th><th>Kategori</th><th>Şehir</th><th>İşlemler</th></tr>
+    <tr th:each="y : ${isyeriler}">
+        <td th:text="${y.id()}"></td>
+        <td th:text="${y.ad()}"></td>
+        <td th:text="${y.kategoriAdi()}"></td>
+        <td th:text="${y.sehirAdi()}"></td>
+        <td>
+            <a th:href="@{/admin/isyeriler/{id}/duzenle(id=${y.id()})}">Düzenle</a>
+            &nbsp;
+            <form class="satir-form" method="post" th:action="@{/admin/isyeriler/{id}/sil(id=${y.id()})}"
+                  onsubmit="return confirm('Bu işyerini silmek istediğinize emin misiniz?');">
+                <button type="submit">Sil</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Harcama Yap</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+        label { display: block; margin-top: 12px; }
+        input, select { width: 100%; padding: 6px; box-sizing: border-box; }
+        button { margin-top: 20px; padding: 8px 16px; }
+        .bilgi { color: #2e7d32; }
+        .hata { color: #b00020; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/musteri}">&larr; Ana sayfa</a></p>
+<h2>Harcama Yap</h2>
+
+<p th:if="${bilgi}" class="bilgi" th:text="${bilgi}"></p>
+<p th:if="${hata}" class="hata" th:text="${hata}"></p>
+
+<form method="post" th:action="@{/musteri/harcama-yap}">
+    <label>Kart
+        <select name="kartId" required>
+            <option th:each="k : ${kartlar}" th:value="${k.id()}"
+                    th:text="'•••• ' + ${k.son4()} + ' (' + ${k.durum()} + ')'"></option>
+        </select>
+    </label>
+    <label>İşyeri
+        <select name="isyeriId" required>
+            <option th:each="y : ${isyeriler}" th:value="${y.id()}"
+                    th:text="${y.ad()} + ' — ' + ${y.sehirAdi()}"></option>
+        </select>
+    </label>
+    <label>Tutar (TL) <input type="number" name="tutar" step="0.01" min="0.01" required></label>
+    <button type="submit">Harcama Yap</button>
+</form>
+</body>
+</html>

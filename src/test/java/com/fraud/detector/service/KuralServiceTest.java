@@ -12,19 +12,20 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Iki farkli kullanici (admin id=1, analist id=2) art arda kural puani
- * guncelliyor. Her guncelleme trg_denetim_kural'i tetikler; bu testin amaci
- * denetim_log.kullanici_id'nin HER SEFERINDE o anki gercek kullaniciyi
+ * Iki farkli kullanici (admin id=1, analist id=2) art arda GECE kuralini
+ * (id=1) guncelliyor. Her guncelleme trg_denetim_kural'i tetikler; bu testin
+ * amaci denetim_log.kullanici_id'nin HER SEFERINDE o anki gercek kullaniciyi
  * gostermesi, onceki kullanicinin degerinin (connection pool'da baglanti
  * yeniden kullanilsa bile) bir sonrakine sizmamasidir.
  *
  * @Transactional: test metodu bitince Spring tum degisiklikleri (ve
- * tetiklenen denetim_log satirlarini) otomatik ROLLBACK eder — demo
- * verisinde kalici bir iz birakmaz, elle geri alma kodu gerekmez.
+ * tetiklenen denetim_log satirlarini) otomatik ROLLBACK eder.
  */
 @SpringBootTest
 @Transactional
 class KuralServiceTest {
+
+    private static final int GECE_KURAL_ID = 1;
 
     @Autowired
     private KuralService kuralService;
@@ -34,8 +35,8 @@ class KuralServiceTest {
 
     @Test
     void ikiFarkliKullaniciArtArdaGuncelleyinceDenetimLogDogruKullaniciyiYazar() {
-        kuralService.puanGuncelle("GECE", 21, 1);   // Sistem Yoneticisi (admin)
-        kuralService.puanGuncelle("GECE", 22, 2);   // Fraud Analisti
+        kuralService.guncelle(GECE_KURAL_ID, "Gece saatinde işlem", 21, null, true, 1);   // admin
+        kuralService.guncelle(GECE_KURAL_ID, "Gece saatinde işlem", 22, null, true, 2);   // analist
 
         List<Map<String, Object>> loglar = jdbcTemplate.queryForList(
                 "SELECT kullanici_id, yeni->>'puan' AS puan FROM denetim_log " +

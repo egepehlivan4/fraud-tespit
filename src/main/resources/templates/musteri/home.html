@@ -3,11 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Müşteri Paneli</title>
+    <style>
+        body { font-family: sans-serif; max-width: 480px; margin: 60px auto; }
+        p.rol { color: #666; margin-top: -8px; }
+        ul { list-style: none; padding: 0; margin-top: 24px; }
+        li { margin: 10px 0; }
+        a { text-decoration: none; color: #1565c0; font-size: 1.05em; }
+        a:hover { text-decoration: underline; }
+        .badge { background: #b00020; color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 0.8em; margin-left: 6px; }
+        form { margin-top: 28px; }
+        button { padding: 8px 16px; }
+    </style>
 </head>
 <body>
 <h2>Hoşgeldin, <span th:text="${adSoyad}"></span></h2>
-<p>Rolün: MUSTERI</p>
-<p><em>Bu ekran yer tutucudur — harcama profili, kartlar, bildirimler vb. ilerleyen aşamalarda eklenecek.</em></p>
+<p class="rol">Rolün: MUSTERI</p>
+<ul>
+    <li><a th:href="@{/musteri/kartlarim}">Kartlarım</a></li>
+    <li><a th:href="@{/musteri/harcama-yap}">Harcama Yap</a></li>
+    <li><a th:href="@{/musteri/islemlerim}">İşlem Geçmişim</a></li>
+    <li><a th:href="@{/musteri/harcama-profilim}">Harcama Profilim</a></li>
+    <li><a th:href="@{/musteri/bekleyen-onay}">Bekleyen Onay</a></li>
+    <li>
+        <a th:href="@{/musteri/bildirimlerim}">Bildirimlerim</a>
+        <span class="badge" th:if="${okunmamisSayisi > 0}" th:text="${okunmamisSayisi}"></span>
+    </li>
+    <li><a th:href="@{/musteri/ayarlarim}">Ayarlarım</a></li>
+</ul>
 <form method="post" th:action="@{/logout}">
     <button type="submit">Çıkış Yap</button>
 </form>

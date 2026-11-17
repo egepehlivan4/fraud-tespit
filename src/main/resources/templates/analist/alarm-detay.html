@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alarm Detay</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        .bilgi { color: #2e7d32; }
+        .hata { color: #b00020; }
+        .uyari { background: #fff3cd; border: 1px solid #ffecb5; padding: 10px; margin-top: 16px; }
+        .karar-form { margin-top: 16px; }
+        button.fraud { background: #b00020; color: #fff; border: none; padding: 8px 16px; margin-right: 8px; }
+        button.temiz { background: #2e7d32; color: #fff; border: none; padding: 8px 16px; }
+        section { margin-top: 24px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/analist/alarmlar}">&larr; Alarm listesi</a></p>
+<h2 th:text="'Alarm #' + ${alarm.id()}"></h2>
+
+<p th:if="${bilgi}" class="bilgi" th:text="${bilgi}"></p>
+<p th:if="${hata}" class="hata" th:text="${hata}"></p>
+
+<table>
+    <tr><th>Tarih</th><td th:text="${#temporals.format(alarm.tarih(), 'dd.MM.yyyy HH:mm')}"></td></tr>
+    <tr><th>Müşteri</th><td th:text="${alarm.sahip()}"></td></tr>
+    <tr><th>İşyeri</th><td th:text="${alarm.isyeriAdi()}"></td></tr>
+    <tr><th>Kart</th><td th:text="'•••• ' + ${alarm.kartSon4()}"></td></tr>
+    <tr><th>Tutar</th><td th:text="${alarm.tutar()} + ' TL'"></td></tr>
+    <tr><th>Toplam Risk Puanı</th><td th:text="${alarm.toplamPuan()}"></td></tr>
+    <tr><th>Durum</th><td th:text="${alarm.durum()}"></td></tr>
+    <tr><th>Müşteri Teyidi</th>
+        <td th:text="${alarm.musteriTeyit() == null ? 'Cevap yok' : (alarm.musteriTeyit() ? 'Onayladı' : 'Reddetti')}"></td>
+    </tr>
+</table>
+
+<section>
+    <h3>Kural Kırılımı</h3>
+    <table>
+        <tr><th>Kural</th><th>Puan</th><th>Açıklama</th></tr>
+        <tr th:each="k : ${aciklama}">
+            <td th:text="${k.kural()}"></td>
+            <td th:text="${k.puan()}"></td>
+            <td th:text="${k.aciklama()}"></td>
+        </tr>
+    </table>
+</section>
+
+<section>
+    <h3>Müşterinin Son İşlemleri</h3>
+    <table>
+        <tr><th>Tarih</th><th>İşyeri</th><th>Kart</th><th>Tutar</th><th>Durum</th></tr>
+        <tr th:each="i : ${sonIslemler}">
+            <td th:text="${#temporals.format(i.tarih(), 'dd.MM.yyyy HH:mm')}"></td>
+            <td th:text="${i.isyeriAdi()}"></td>
+            <td th:text="'•••• ' + ${i.kartSon4()}"></td>
+            <td th:text="${i.tutar()} + ' TL'"></td>
+            <td th:text="${i.durum()}"></td>
+        </tr>
+    </table>
+</section>
+
+<div class="uyari" th:if="${!fraudHalkasi.isEmpty()}">
+    <strong>Uyarı:</strong> Bu hesapla cihaz paylaşan bağlı hesaplar bulundu.
+    <table>
+        <tr><th>Hesap Id</th><th>Sahibi</th><th>Derinlik</th></tr>
+        <tr th:each="f : ${fraudHalkasi}">
+            <td th:text="${f.hesapId()}"></td>
+            <td th:text="${f.sahibi()}"></td>
+            <td th:text="${f.derinlik()}"></td>
+        </tr>
+    </table>
+</div>
+
+<section class="karar-form" th:if="${alarm.durum() == 'BEKLIYOR'}">
+    <h3>Karar</h3>
+    <form method="post" th:action="@{/analist/alarmlar/{id}/karar(id=${alarm.id()})}" style="display:inline">
+        <input type="hidden" name="karar" value="FRAUD">
+        <button class="fraud" type="submit">FRAUD — kartı blokla</button>
+    </form>
+    <form method="post" th:action="@{/analist/alarmlar/{id}/karar(id=${alarm.id()})}" style="display:inline">
+        <input type="hidden" name="karar" value="TEMIZ">
+        <button class="temiz" type="submit">TEMIZ — işlem geçerli</button>
+    </form>
+</section>
+</body>
+</html>

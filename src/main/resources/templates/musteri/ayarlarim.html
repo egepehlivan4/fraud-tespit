@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ayarlarım</title>
+    <style>
+        body { font-family: sans-serif; max-width: 420px; margin: 40px auto; }
+        label { display: block; margin-top: 14px; }
+        input[type=number] { width: 100%; padding: 6px; box-sizing: border-box; }
+        input[type=checkbox] { width: auto; margin-right: 6px; }
+        button { margin-top: 20px; padding: 8px 16px; }
+        .bilgi { color: #2e7d32; }
+        .hata { color: #b00020; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/musteri}">&larr; Ana sayfa</a></p>
+<h2>Ayarlarım</h2>
+
+<p th:if="${bilgi}" class="bilgi" th:text="${bilgi}"></p>
+<p th:if="${hata}" class="hata" th:text="${hata}"></p>
+
+<form method="post" th:action="@{/musteri/ayarlarim}">
+    <label>Tolerans Yüzdesi (%5 - %200)
+        <input type="number" name="toleransYuzde" step="0.01" min="5" max="200"
+               th:value="${ayar.toleransYuzde()}" required>
+    </label>
+    <label>
+        <input type="checkbox" name="otomatikTolerans" value="true" th:checked="${ayar.otomatikTolerans()}">
+        Otomatik tolerans (ortalama + 2 standart sapma) — işaretlenirse yukarıdaki yüzde kullanılmaz
+    </label>
+    <label>
+        <input type="checkbox" name="bildirimAktif" value="true" th:checked="${ayar.bildirimAktif()}">
+        Bütçe bildirimlerini (limit aşımı / tempo) al
+    </label>
+    <button type="submit">Kaydet</button>
+</form>
+</body>
+</html>

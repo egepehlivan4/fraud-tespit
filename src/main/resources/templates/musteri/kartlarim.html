@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kartlarım</title>
+    <style>
+        body { font-family: sans-serif; max-width: 700px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/musteri}">&larr; Ana sayfa</a></p>
+<h2>Hesaplarım</h2>
+<table>
+    <tr><th>IBAN</th><th>Bakiye</th></tr>
+    <tr th:each="h : ${hesaplar}">
+        <td th:text="${h.iban()}"></td>
+        <td th:text="${h.bakiye()} + ' TL'"></td>
+    </tr>
+</table>
+
+<h2>Kartlarım</h2>
+<table>
+    <tr><th>Son 4</th><th>Durum</th></tr>
+    <tr th:each="k : ${kartlar}">
+        <td th:text="${k.son4()}"></td>
+        <td th:text="${k.durum()}"></td>
+    </tr>
+</table>
+</body>
+</html>

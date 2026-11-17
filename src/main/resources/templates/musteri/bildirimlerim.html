@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bildirimlerim</title>
+    <style>
+        body { font-family: sans-serif; max-width: 700px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        .okunmamis { font-weight: bold; }
+        form.satir-form { display: inline; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/musteri}">&larr; Ana sayfa</a></p>
+<h2>Bildirimlerim</h2>
+
+<p th:if="${bildirimler.isEmpty()}">Hiç bildiriminiz yok.</p>
+
+<table th:if="${!bildirimler.isEmpty()}">
+    <tr><th>Tarih</th><th>Tip</th><th>Mesaj</th><th></th></tr>
+    <tr th:each="b : ${bildirimler}" th:class="${b.okundu()} ? '' : 'okunmamis'">
+        <td th:text="${#temporals.format(b.olusturma(), 'dd.MM.yyyy HH:mm')}"></td>
+        <td th:text="${b.tip()}"></td>
+        <td th:text="${b.mesaj()}"></td>
+        <td>
+            <form class="satir-form" method="post" th:if="${!b.okundu()}"
+                  th:action="@{/musteri/bildirimlerim/{id}/okundu(id=${b.id()})}">
+                <button type="submit">Okundu işaretle</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

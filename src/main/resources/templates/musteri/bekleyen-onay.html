@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bekleyen Onay</title>
+    <style>
+        body { font-family: sans-serif; max-width: 700px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        .bilgi { color: #2e7d32; }
+        .hata { color: #b00020; }
+        form.satir-form { display: inline; }
+        button.reddet { background: #b00020; color: #fff; border: none; padding: 4px 10px; }
+        button.onayla { background: #2e7d32; color: #fff; border: none; padding: 4px 10px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/musteri}">&larr; Ana sayfa</a></p>
+<h2>Bekleyen Onay</h2>
+<p>Aşağıdaki işlemler güvenlik kontrolüne alındı. Bu işlemi siz mi yaptınız?</p>
+
+<p th:if="${bilgi}" class="bilgi" th:text="${bilgi}"></p>
+<p th:if="${hata}" class="hata" th:text="${hata}"></p>
+
+<p th:if="${bekleyenler.isEmpty()}">Bekleyen onayınız yok.</p>
+
+<table th:if="${!bekleyenler.isEmpty()}">
+    <tr><th>Tarih</th><th>İşyeri</th><th>Tutar</th><th>İşlemler</th></tr>
+    <tr th:each="b : ${bekleyenler}">
+        <td th:text="${#temporals.format(b.tarih(), 'dd.MM.yyyy HH:mm')}"></td>
+        <td th:text="${b.isyeriAdi()}"></td>
+        <td th:text="${b.tutar()} + ' TL'"></td>
+        <td>
+            <form class="satir-form" method="post" th:action="@{/musteri/bekleyen-onay/{id}/onayla(id=${b.alarmId()})}">
+                <button class="onayla" type="submit">Ben yaptım</button>
+            </form>
+            <form class="satir-form" method="post" th:action="@{/musteri/bekleyen-onay/{id}/reddet(id=${b.alarmId()})}"
+                  onsubmit="return confirm('Bu işlemi siz yapmadıysanız kartınız bloke edilecek ve tutar iade edilecektir. Onaylıyor musunuz?');">
+                <button class="reddet" type="submit">Ben yapmadım</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -3,11 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Analist Paneli</title>
+    <style>
+        body { font-family: sans-serif; max-width: 480px; margin: 60px auto; }
+        p.rol { color: #666; margin-top: -8px; }
+        ul { list-style: none; padding: 0; margin-top: 24px; }
+        li { margin: 10px 0; }
+        a { text-decoration: none; color: #1565c0; font-size: 1.05em; }
+        a:hover { text-decoration: underline; }
+        form { margin-top: 28px; }
+        button { padding: 8px 16px; }
+    </style>
 </head>
 <body>
 <h2>Hoşgeldin, <span th:text="${adSoyad}"></span></h2>
-<p>Rolün: ANALIST</p>
-<p><em>Bu ekran yer tutucudur — bekleyen alarmlar, raporlar vb. ilerleyen aşamalarda eklenecek.</em></p>
+<p class="rol">Rolün: ANALIST</p>
+<ul>
+    <li><a th:href="@{/analist/alarmlar}">Alarmlar</a></li>
+    <li><a th:href="@{/analist/raporlar}">Raporlar</a></li>
+</ul>
 <form method="post" th:action="@{/logout}">
     <button type="submit">Çıkış Yap</button>
 </form>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>İşlem Simülatörü</title>
+    <style>
+        body { font-family: sans-serif; max-width: 700px; margin: 40px auto; }
+        label { display: block; margin-top: 12px; }
+        input, select { width: 100%; padding: 6px; box-sizing: border-box; }
+        button { margin-top: 16px; padding: 8px 16px; }
+        .bilgi { color: #2e7d32; }
+        .hata { color: #b00020; }
+        .senaryolar { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+        .senaryo-kutu { border: 1px solid #ccc; padding: 12px; width: 200px; }
+        .serbest { border: 1px solid #ccc; padding: 16px; margin-top: 24px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin}">&larr; Admin ana sayfa</a></p>
+<h2>İşlem Simülatörü</h2>
+<p><em>Analist bu ekranı göremez; işlem oluşturma yalnızca admin ve müşterinin
+kendi "Harcama Yap" ekranında mümkündür.</em></p>
+
+<p th:if="${bilgi}" class="bilgi" th:text="${bilgi}"></p>
+<p th:if="${hata}" class="hata" th:text="${hata}"></p>
+
+<h3>Hızlı Senaryolar</h3>
+<p>Bir kart seçip butona basın — işyeri/tutar/tarih senaryoya göre otomatik ayarlanır.</p>
+<div class="senaryolar">
+    <div class="senaryo-kutu">
+        <form method="post" th:action="@{/admin/islem-simulatoru/senaryo/gece}">
+            <label>Kart
+                <select name="kartId" required>
+                    <option th:each="k : ${kartlar}" th:value="${k.id()}"
+                            th:text="${k.sahip()} + ' •••• ' + ${k.son4()}"></option>
+                </select>
+            </label>
+            <button type="submit">Gece</button>
+        </form>
+    </div>
+    <div class="senaryo-kutu">
+        <form method="post" th:action="@{/admin/islem-simulatoru/senaryo/hiz}">
+            <label>Kart
+                <select name="kartId" required>
+                    <option th:each="k : ${kartlar}" th:value="${k.id()}"
+                            th:text="${k.sahip()} + ' •••• ' + ${k.son4()}"></option>
+                </select>
+            </label>
+            <button type="submit">Hız (3 işlem)</button>
+        </form>
+    </div>
+    <div class="senaryo-kutu">
+        <form method="post" th:action="@{/admin/islem-simulatoru/senaryo/imkansiz-seyahat}">
+            <label>Kart
+                <select name="kartId" required>
+                    <option th:each="k : ${kartlar}" th:value="${k.id()}"
+                            th:text="${k.sahip()} + ' •••• ' + ${k.son4()}"></option>
+                </select>
+            </label>
+            <button type="submit">İmkânsız Seyahat</button>
+        </form>
+    </div>
+    <div class="senaryo-kutu">
+        <form method="post" th:action="@{/admin/islem-simulatoru/senaryo/yuksek-tutar}">
+            <label>Kart
+                <select name="kartId" required>
+                    <option th:each="k : ${kartlar}" th:value="${k.id()}"
+                            th:text="${k.sahip()} + ' •••• ' + ${k.son4()}"></option>
+                </select>
+            </label>
+            <button type="submit">Yüksek Tutar</button>
+        </form>
+    </div>
+</div>
+
+<div class="serbest">
+    <h3>Serbest İşlem</h3>
+    <form method="post" th:action="@{/admin/islem-simulatoru}">
+        <label>Kart
+            <select name="kartId" required>
+                <option th:each="k : ${kartlar}" th:value="${k.id()}"
+                        th:text="${k.sahip()} + ' •••• ' + ${k.son4()} + ' (' + ${k.durum()} + ')'"></option>
+            </select>
+        </label>
+        <label>İşyeri
+            <select name="isyeriId" required>
+                <option th:each="y : ${isyeriler}" th:value="${y.id()}"
+                        th:text="${y.ad()} + ' — ' + ${y.sehirAdi()}"></option>
+            </select>
+        </label>
+        <label>Tutar (TL) <input type="number" name="tutar" step="0.01" min="0.01" required></label>
+        <label>Cihaz (opsiyonel)
+            <select name="cihazId">
+                <option value="">Yok</option>
+                <option th:each="c : ${cihazlar}" th:value="${c.id()}" th:text="${c.tanim()}"></option>
+            </select>
+        </label>
+        <label>Saat — tarih her zaman bugün (<span th:text="${#temporals.format(bugun, 'dd.MM.yyyy')}"></span>),
+            şu andan ileri bir saat seçilemez (boş bırakılırsa şimdi)
+            <input type="time" name="saat" th:max="${suAnSaat}">
+        </label>
+        <button type="submit">İşlemi Ekle</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alarmlar</title>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        .bilgi { color: #2e7d32; }
+        .hata { color: #b00020; }
+        .BEKLIYOR { font-weight: bold; }
+        .FRAUD { color: #b00020; }
+        .TEMIZ { color: #2e7d32; }
+        .filtre { margin-top: 12px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/analist}">&larr; Analist ana sayfa</a></p>
+<h2>Alarmlar</h2>
+
+<p th:if="${bilgi}" class="bilgi" th:text="${bilgi}"></p>
+<p th:if="${hata}" class="hata" th:text="${hata}"></p>
+
+<form class="filtre" method="get" th:action="@{/analist/alarmlar}">
+    <label>Durum:
+        <select name="durum">
+            <option value="" th:selected="${secilenDurum == null}">Hepsi</option>
+            <option value="BEKLIYOR" th:selected="${secilenDurum == 'BEKLIYOR'}">BEKLIYOR</option>
+            <option value="FRAUD" th:selected="${secilenDurum == 'FRAUD'}">FRAUD</option>
+            <option value="TEMIZ" th:selected="${secilenDurum == 'TEMIZ'}">TEMIZ</option>
+        </select>
+    </label>
+    <button type="submit">Filtrele</button>
+</form>
+
+<table>
+    <tr><th>Id</th><th>Tarih</th><th>Müşteri</th><th>İşyeri</th><th>Tutar</th><th>Puan</th><th>Durum</th><th>Müşteri Teyidi</th></tr>
+    <tr th:each="a : ${alarmlar}">
+        <td><a th:href="@{/analist/alarmlar/{id}(id=${a.id()})}" th:text="${a.id()}"></a></td>
+        <td th:text="${#temporals.format(a.tarih(), 'dd.MM.yyyy HH:mm')}"></td>
+        <td th:text="${a.sahip()}"></td>
+        <td th:text="${a.isyeriAdi()}"></td>
+        <td th:text="${a.tutar()} + ' TL'"></td>
+        <td th:text="${a.toplamPuan()}"></td>
+        <td th:text="${a.durum()}" th:class="${a.durum()}"></td>
+        <td th:text="${a.musteriTeyit() == null ? 'Cevap yok' : (a.musteriTeyit() ? 'Onayladı' : 'Reddetti')}"></td>
+    </tr>
+</table>
+</body>
+</html>

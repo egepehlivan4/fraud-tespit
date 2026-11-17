@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>İşyeri Düzenle</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+        label { display: block; margin-top: 12px; }
+        input, select { width: 100%; padding: 6px; box-sizing: border-box; }
+        button { margin-top: 20px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin/isyeriler}">&larr; İşyeri listesi</a></p>
+<h2>İşyeri Düzenle</h2>
+
+<form method="post" th:action="@{/admin/isyeriler/{id}(id=${isyeri.id()})}">
+    <label>Ad <input type="text" name="ad" th:value="${isyeri.ad()}" required></label>
+    <label>Kategori
+        <select name="kategoriId" required>
+            <option th:each="k : ${kategoriler}" th:value="${k.id()}" th:text="${k.ad()}"
+                    th:selected="${k.id() == isyeri.kategoriId()}"></option>
+        </select>
+    </label>
+    <label>Şehir
+        <select name="sehirId" required>
+            <option th:each="s : ${sehirler}" th:value="${s.id()}" th:text="${s.ad()}"
+                    th:selected="${s.id() == isyeri.sehirId()}"></option>
+        </select>
+    </label>
+    <button type="submit">Kaydet</button>
+</form>
+</body>
+</html>

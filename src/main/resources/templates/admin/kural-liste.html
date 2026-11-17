@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kural Yönetimi</title>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        .bilgi { color: #2e7d32; }
+        .hata { color: #b00020; }
+        .pasif { color: #999; }
+        form.satir-form { display: inline; }
+        .esik-form { margin-top: 24px; padding: 12px; border: 1px solid #ccc; max-width: 320px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/admin}">&larr; Admin ana sayfa</a></p>
+<h2>Kural Yönetimi</h2>
+
+<p th:if="${bilgi}" class="bilgi" th:text="${bilgi}"></p>
+<p th:if="${hata}" class="hata" th:text="${hata}"></p>
+
+<p><a th:href="@{/admin/kurallar/yeni}">+ Yeni kural ekle</a></p>
+
+<table>
+    <tr><th>Id</th><th>Tip</th><th>Ad</th><th>Puan</th><th>Eşik</th><th>Durum</th><th>İşlemler</th></tr>
+    <tr th:each="k : ${kurallar}" th:class="${k.aktif()} ? '' : 'pasif'">
+        <td th:text="${k.id()}"></td>
+        <td th:text="${k.kod()}"></td>
+        <td th:text="${k.ad()}"></td>
+        <td th:text="${k.puan()}"></td>
+        <td th:text="${k.esik() != null ? k.esik() : '—'}"></td>
+        <td th:text="${k.aktif()} ? 'Aktif' : 'Pasif'"></td>
+        <td>
+            <a th:href="@{/admin/kurallar/{id}/duzenle(id=${k.id()})}">Düzenle</a>
+            &nbsp;
+            <form class="satir-form" method="post" th:action="@{/admin/kurallar/{id}/sil(id=${k.id()})}"
+                  onsubmit="return confirm('Bu kuralı silmek/pasif yapmak istediğinize emin misiniz?');">
+                <button type="submit">Sil</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<form class="esik-form" method="post" th:action="@{/admin/kurallar/alarm-esik}">
+    <strong>Alarm Eşiği (ALARM_ESIK)</strong>
+    <p>Toplam risk puanı bu değere ulaşan/geçen işlemler için alarm açılır.</p>
+    <input type="number" step="0.01" name="deger" th:value="${alarmEsik}" required>
+    <button type="submit">Güncelle</button>
+</form>
+</body>
+</html>

@@ -24,9 +24,19 @@ public final class VeriHatasiCozumleyici {
         return switch (sqlEx.getSQLState()) {
             case "23503" -> "Bu kayıt başka bir tabloda kullanıldığı için silinemiyor veya değiştirilemiyor.";
             case "23505" -> "Bu değer zaten kullanılıyor, benzersiz olmalı.";
-            case "P0001" -> sqlEx.getMessage();
+            case "23514" -> "Girilen değer izin verilen aralığın/listenin dışında.";
+            case "P0001" -> ilkSatirTemiz(sqlEx.getMessage());
             default -> "Veritabanı hatası: " + sqlEx.getMessage();
         };
+    }
+
+    /** PostgreSQL surucusu RAISE EXCEPTION mesajina "ERROR: " oneki ve "Where:" satirlari ekler. */
+    private static String ilkSatirTemiz(String mesaj) {
+        if (mesaj == null) {
+            return "";
+        }
+        String ilkSatir = mesaj.split("\\R", 2)[0].trim();
+        return ilkSatir.startsWith("ERROR: ") ? ilkSatir.substring("ERROR: ".length()) : ilkSatir;
     }
 
     private static SQLException sqlExceptionBul(Throwable t) {

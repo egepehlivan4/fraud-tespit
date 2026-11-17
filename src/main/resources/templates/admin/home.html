@@ -3,14 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Paneli</title>
+    <style>
+        body { font-family: sans-serif; max-width: 480px; margin: 60px auto; }
+        p.rol { color: #666; margin-top: -8px; }
+        ul { list-style: none; padding: 0; margin-top: 24px; }
+        li { margin: 10px 0; }
+        a { text-decoration: none; color: #1565c0; font-size: 1.05em; }
+        a:hover { text-decoration: underline; }
+        li.analist a { color: #6a1b9a; }
+        form { margin-top: 28px; }
+        button { padding: 8px 16px; }
+        hr { border: none; border-top: 1px solid #ddd; margin: 16px 0; }
+    </style>
 </head>
 <body>
 <h2>Hoşgeldin, <span th:text="${adSoyad}"></span></h2>
-<p>Rolün: ADMIN</p>
+<p class="rol">Rolün: ADMIN</p>
 <ul>
     <li><a th:href="@{/admin/kullanicilar}">Kullanıcı Yönetimi</a></li>
+    <li><a th:href="@{/admin/isyeriler}">İşyeri Yönetimi</a></li>
+    <li><a th:href="@{/admin/kartlar}">Kart Yönetimi</a></li>
+    <li><a th:href="@{/admin/kurallar}">Kural Yönetimi</a></li>
+    <li><a th:href="@{/admin/islem-simulatoru}">İşlem Simülatörü</a></li>
+    <li><a th:href="@{/admin/model}">Model Yönetimi</a></li>
+    <li><a th:href="@{/admin/denetim-log}">Denetim Log</a></li>
 </ul>
-<p><em>İşyeri/kural yönetimi vb. ilerleyen aşamalarda eklenecek.</em></p>
+<hr>
+<ul>
+    <li class="analist"><a th:href="@{/analist/alarmlar}">Alarmlar (Analist ekranı)</a></li>
+    <li class="analist"><a th:href="@{/analist/raporlar}">Raporlar (Analist ekranı)</a></li>
+</ul>
 <form method="post" th:action="@{/logout}">
     <button type="submit">Çıkış Yap</button>
 </form>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>İşlem Geçmişim</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        .filtre label { display: inline-block; margin-right: 12px; }
+        .iade { color: #b00020; font-weight: bold; }
+        .sayfalama { margin-top: 16px; }
+        .sayfalama a { margin-right: 8px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/musteri}">&larr; Ana sayfa</a></p>
+<h2>İşlem Geçmişim</h2>
+
+<form class="filtre" method="get" th:action="@{/musteri/islemlerim}">
+    <label>Kart:
+        <select name="kartId">
+            <option value="">Hepsi</option>
+            <option th:each="k : ${kartlar}" th:value="${k.id()}" th:text="'•••• ' + ${k.son4()}"
+                    th:selected="${secilenKart != null && secilenKart == k.id()}"></option>
+        </select>
+    </label>
+    <label>Başlangıç: <input type="date" name="bas" th:value="${bas}"></label>
+    <label>Bitiş: <input type="date" name="bit" th:value="${bit}"></label>
+    <button type="submit">Filtrele</button>
+</form>
+
+<table>
+    <tr><th>Tarih</th><th>İşyeri</th><th>Kart</th><th>Tutar</th><th>Durum</th></tr>
+    <tr th:each="i : ${islemler}">
+        <td th:text="${#temporals.format(i.tarih(), 'dd.MM.yyyy HH:mm')}"></td>
+        <td th:text="${i.isyeriAdi()}"></td>
+        <td th:text="'•••• ' + ${i.kartSon4()}"></td>
+        <td th:text="${i.tutar()} + ' TL'"></td>
+        <td>
+            <span th:if="${i.durum() == 'REDDEDILDI'}" class="iade">İade edildi</span>
+            <span th:unless="${i.durum() == 'REDDEDILDI'}">Onaylandı</span>
+        </td>
+    </tr>
+</table>
+
+<div class="sayfalama">
+    <a th:if="${sayfa > 1}"
+       th:href="@{/musteri/islemlerim(kartId=${secilenKart}, bas=${bas}, bit=${bit}, sayfa=${sayfa - 1})}">&laquo; Önceki</a>
+    <span th:text="'Sayfa ' + ${sayfa} + ' / ' + ${toplamSayfa}"></span>
+    <a th:if="${sayfa < toplamSayfa}"
+       th:href="@{/musteri/islemlerim(kartId=${secilenKart}, bas=${bas}, bit=${bit}, sayfa=${sayfa + 1})}">Sonraki &raquo;</a>
+</div>
+</body>
+</html>

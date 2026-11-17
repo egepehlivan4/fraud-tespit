@@ -85,9 +85,14 @@ CREATE INDEX ix_islem_kart_tarih ON islem(kart_id, tarih);
 CREATE INDEX ix_islem_cihaz      ON islem(cihaz_id);
 
 -- Kurallar: puan ve eşik admin panelinden değiştirilebilir
+-- kod: trigger'in tanidigi 5 sabit TIP'ten biri (UNIQUE degil) — ayni tipten
+-- birden fazla kademeli kural tanimlanabilir (orn. YUKSEK_TUTAR icin 5x/+40
+-- ve 15x/+60). fn_islem_risk her aktif satiri kendi puan/esik'i ile ayri ayri
+-- degerlendirdigi icin bu trigger'da hicbir degisiklik gerektirmez.
 CREATE TABLE kural (
     id     SERIAL PRIMARY KEY,
-    kod    VARCHAR(30) NOT NULL UNIQUE,
+    kod    VARCHAR(30) NOT NULL
+           CHECK (kod IN ('GECE', 'YUKSEK_TUTAR', 'YENI_ISYERI', 'HIZ', 'IMKANSIZ_SEYAHAT')),
     ad     VARCHAR(100) NOT NULL,
     puan   INT NOT NULL CHECK (puan BETWEEN 0 AND 100),
     esik   NUMERIC(10,2),                      -- kurala göre anlamı değişir
@@ -385,6 +390,20 @@ CREATE TRIGGER trg_alarm_kilit
 BEFORE UPDATE ON alarm
 FOR EACH ROW EXECUTE FUNCTION fn_alarm_kilit();
 
+-- 3.4b İptal edilen kartın durumu hiçbir şekilde değiştirilemez
+CREATE FUNCTION fn_kart_iptal_kilit() RETURNS trigger AS $$
+BEGIN
+    IF OLD.durum = 'IPTAL' AND NEW.durum <> OLD.durum THEN
+        RAISE EXCEPTION 'Kart % iptal edilmiş, durumu değiştirilemez', OLD.id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_kart_iptal_kilit
+BEFORE UPDATE ON kart
+FOR EACH ROW EXECUTE FUNCTION fn_kart_iptal_kilit();
+
 -- ---------------------------------------------------------------------
 -- 3.5 KİŞİSEL HARCAMA PROFİLİ — online öğrenme
 --  Ay bitince o ayın toplamı modele katılır:
@@ -643,13 +662,24 @@ $$;
 -- 4.3 Bloke kartı yeniden aktif etme (yalnızca admin)
 CREATE PROCEDURE sp_kart_aktif_et(p_kart_id INT, p_admin_id INT)
 LANGUAGE plpgsql AS $$
+DECLARE
+    v_durum VARCHAR;
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM kullanici k JOIN rol r ON r.id = k.rol_id
                    WHERE k.id = p_admin_id AND r.ad = 'ADMIN') THEN
         RAISE EXCEPTION 'Bu işlem için admin yetkisi gerekli';
     END IF;
+
+    SELECT durum INTO v_durum FROM kart WHERE id = p_kart_id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Kart % bulunamadı', p_kart_id;
+    END IF;
+    IF v_durum <> 'BLOKE' THEN
+        RAISE EXCEPTION 'Kart % durumda, sadece BLOKE kart AKTIF yapılabilir', v_durum;
+    END IF;
+
     PERFORM set_config('app.kullanici_id', p_admin_id::TEXT, TRUE);
-    UPDATE kart SET durum = 'AKTIF' WHERE id = p_kart_id AND durum = 'BLOKE';
+    UPDATE kart SET durum = 'AKTIF' WHERE id = p_kart_id;
 END;
 $$;
 

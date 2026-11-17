@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Hata</title>
+    <style>
+        body { font-family: sans-serif; max-width: 480px; margin: 80px auto; }
+        p.mesaj { color: #b00020; }
+    </style>
 </head>
 <body>
 <h2>İşlem gerçekleştirilemedi</h2>
-<p th:text="${mesaj}"></p>
+<p class="mesaj" th:text="${mesaj}"></p>
 <a href="javascript:history.back()">Geri dön</a>
 </body>
 </html>

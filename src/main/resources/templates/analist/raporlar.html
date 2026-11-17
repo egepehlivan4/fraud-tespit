@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Şehir / Kategori Raporu</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+        .filtre { margin-top: 12px; }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/analist}">&larr; Analist ana sayfa</a></p>
+<h2>Şehir / Kategori Raporu</h2>
+<p><a th:href="@{/analist/raporlar/fraud-halkasi}">Fraud Halkası Sorgulama &rarr;</a></p>
+
+<form class="filtre" method="get" th:action="@{/analist/raporlar}">
+    <label>Başlangıç: <input type="date" name="bas" th:value="${bas}"></label>
+    <label>Bitiş: <input type="date" name="bit" th:value="${bit}"></label>
+    <button type="submit">Filtrele</button>
+</form>
+
+<canvas id="grafik" width="760" height="320"></canvas>
+
+<table>
+    <tr><th>Şehir</th><th>Kategori</th><th>İşlem Sayısı</th><th>Alarm Sayısı</th><th>Fraud Sayısı</th><th>Alarm Oranı (%)</th></tr>
+    <tr th:each="s : ${satirlar}">
+        <td th:text="${s.sehir()}"></td>
+        <td th:text="${s.kategori()}"></td>
+        <td th:text="${s.islemSayisi()}"></td>
+        <td th:text="${s.alarmSayisi()}"></td>
+        <td th:text="${s.fraudSayisi()}"></td>
+        <td th:text="${s.alarmOrani()}"></td>
+    </tr>
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+var etiketler = /*[[${etiketler}]]*/ [];
+var oranlar = /*[[${oranlar}]]*/ [];
+
+new Chart(document.getElementById('grafik'), {
+    type: 'bar',
+    data: {
+        labels: etiketler,
+        datasets: [{ label: 'Alarm Oranı (%)', data: oranlar, backgroundColor: '#1565c0' }]
+    },
+    options: { scales: { y: { beginAtZero: true } } }
+});
+/*]]>*/
+</script>
+</body>
+</html>
